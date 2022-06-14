@@ -4,7 +4,7 @@ import { select, Store } from '@ngrx/store';
 import { registerAction } from 'src/app/auth/store/actions/register.action';
 import { Observable } from 'rxjs';
 import { isSubmittingSelector } from 'src/app/auth/store/selectors';
-import { AuthService } from 'src/app/auth/services/auth.service';
+import { RegisterRequestInterface } from 'src/app/auth/types/registerRequest.interface';
 
 @Component({
   selector: 'ma-register',
@@ -15,11 +15,7 @@ export class RegisterComponent implements OnInit {
   form!: FormGroup;
   isSubmitting$!: Observable<boolean>;
 
-  constructor(
-    private fb: FormBuilder,
-    private store: Store,
-    private authService: AuthService
-  ) {}
+  constructor(private fb: FormBuilder, private store: Store) {}
 
   ngOnInit(): void {
     this.initializeForm();
@@ -27,11 +23,9 @@ export class RegisterComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.store.dispatch(registerAction(this.form.value));
+    const request: RegisterRequestInterface = { user: this.form.value };
 
-    this.authService.register(this.form.value).subscribe((currentUser) => {
-      console.log(currentUser);
-    });
+    this.store.dispatch(registerAction({ request }));
   }
 
   private initializeForm(): void {
