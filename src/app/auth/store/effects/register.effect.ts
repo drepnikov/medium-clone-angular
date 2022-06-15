@@ -15,11 +15,13 @@ export class RegisterEffect {
       ofType(registerAction),
       switchMap(({ request }) => {
         return this.authService.register(request).pipe(
-          map((res) => {
-            return registerSuccessAction({ currentUser: res });
+          map((currentUser) => {
+            return registerSuccessAction({ currentUser });
           }),
-          catchError(() => {
-            return of(registerFailureAction());
+          catchError((errorResponse) => {
+            return of(
+              registerFailureAction({ errors: errorResponse.error.errors })
+            );
           })
         );
       })
